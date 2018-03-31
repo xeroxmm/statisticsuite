@@ -125,4 +125,46 @@ class StatisticParameterFeaturesTest {
         else
             assertEquals(testArrayList.sort(), paramObj.getFeatures(rawDataObj).sort())
     }
+
+    @Test
+    fun isAbsoluteFrequencyUntouchedNoStorage(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+
+        val paramObj = StatisticParameterFeatures()
+
+        assertEquals(paramObj.getAbsoluteFrequencies(rawDataObj).sort(), arrayListOf(2.0,2.0,2.0,2.0,1.0).sort())
+    }
+
+    @Test
+    fun isAbsoluteFrequencyTouchedNoStorage(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+
+        val paramObj = StatisticParameterFeatures()
+        paramObj.getAbsoluteFrequencies(rawDataObj)
+
+        rawDataObj.addValue(5.5)
+
+        assertEquals(paramObj.getAbsoluteFrequencies(rawDataObj).sort(), arrayListOf(3.0,2.0,2.0,2.0,1.0).sort())
+    }
+
+    @Test
+    fun isAbsoluteFrequencyTouchedStorage(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+
+        val paramObj = StatisticParameterFeatures()
+        paramObj.useStorage( true )
+        paramObj.getAbsoluteFrequencies(rawDataObj)
+
+        rawDataObj.addValue(5.5)
+
+        paramObj.getFeatures( rawDataObj )
+        val timeToTest = paramObj.getComputationTime()
+        Thread.sleep(200)
+        paramObj.getAbsoluteFrequencies(rawDataObj)
+
+        assertEquals(timeToTest, paramObj.getComputationTime())
+    }
 }
