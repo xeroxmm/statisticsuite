@@ -1,0 +1,5 @@
+package mainsuite
+
+class StatisticSuite {
+
+}
