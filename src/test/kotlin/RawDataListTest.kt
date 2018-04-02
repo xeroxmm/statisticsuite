@@ -9,7 +9,7 @@ class RawDataListTest {
     @Test
     fun checkBaseListRewrite() {
         val rawObj = RawDataList()
-        rawObj.useAsBaseList( ArrayList<Double>(knownArrayListUnsigned) )
+        rawObj.useAsBaseList( ArrayList<Number>(knownArrayListUnsigned) )
 
         assertEquals(knownArrayListUnsigned, rawObj.getValues())
     }

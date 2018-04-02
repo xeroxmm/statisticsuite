@@ -3,29 +3,23 @@ package mainsuite.container
 import mainsuite.interfaces.OnChangeBroadcastInterface
 
 class RawDataList {
-    private var rawData: ArrayList<Double> = arrayListOf()
+    private var rawData: ArrayList<Number> = arrayListOf()
     private val clientsToPropagateOnChange : ArrayList<OnChangeBroadcastInterface> = arrayListOf()
     private val clientsWithCurrentData : ArrayList<String> = arrayListOf()
 
-    fun useAsBaseList(listOfValues: ArrayList<Double>){
+    fun useAsBaseList(listOfValues: ArrayList<Number>){
         rawData = listOfValues
         broadcastChangeToClients()
     }
-    fun addValues(listOfValues: ArrayList<Double>){
+    fun addValues(listOfValues: ArrayList<Number>){
         listOfValues.forEach {
             rawData.add( it )
         }
         broadcastChangeToClients()
     }
-    fun addValues(listOfValues: Array<Number>){
-        listOfValues.forEach {
-            rawData.add(it.toDouble())
-        }
-        broadcastChangeToClients()
-    }
 
     fun addValue(additionalValue: Number){
-        rawData.add( additionalValue.toDouble() )
+        rawData.add( additionalValue )
         broadcastChangeToClients()
     }
 
@@ -42,7 +36,7 @@ class RawDataList {
 
         return true
     }
-    fun getValues():ArrayList<Double> { return rawData }
+    fun getValues():ArrayList<Number> { return rawData }
     fun hasValueUpdateToBroadcast(clientIdentifier : String) : Boolean {
         return !clientsWithCurrentData.contains( clientIdentifier )
     }

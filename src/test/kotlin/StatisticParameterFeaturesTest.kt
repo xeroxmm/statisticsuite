@@ -11,7 +11,7 @@ class StatisticParameterFeaturesTest {
     @Test
     fun isStorageWorkingT_1() {
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListSigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListSigned))
 
         val paramObj = StatisticParameterFeatures()
         paramObj.useStorage(true)
@@ -32,7 +32,7 @@ class StatisticParameterFeaturesTest {
     @Test
     fun isStorageWorkingT_2() {
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListSigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListSigned))
 
         val paramObj = StatisticParameterFeatures()
         paramObj.useStorage(true)
@@ -60,29 +60,29 @@ class StatisticParameterFeaturesTest {
     @Test
     fun getFeaturesSignedUntouchedNoStorage() {
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListSigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListSigned))
 
         val paramObj = StatisticParameterFeatures()
 
-        assertEquals(paramObj.getFeatures(rawDataObj).sort(), knownArrayListSigned.sort())
+        assertEquals(paramObj.getFeatures(rawDataObj).sortBy { it.toDouble() }, knownArrayListSigned.sort())
     }
 
     @Test
     fun getFeaturesUnsignedUntouchedNoStorage() {
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
 
         val testArrayList: ArrayList<Double> = arrayListOf(5.5, 4.4, 3.3, 2.2, 1.1, 0.0)
 
         val paramObj = StatisticParameterFeatures()
 
-        assertEquals(testArrayList.sort(), paramObj.getFeatures(rawDataObj).sort())
+        assertEquals(testArrayList.sort(), paramObj.getFeatures(rawDataObj).sortBy { it.toDouble() })
     }
 
     @Test
     fun getFeaturesUnsignedTouchedNoStorage() {
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
 
         val testArrayList: ArrayList<Double> = arrayListOf(-3.0, 5.5, 4.4, 3.3, 2.2, 1.1, 0.0, 3.0)
 
@@ -92,13 +92,13 @@ class StatisticParameterFeaturesTest {
         rawDataObj.addValue( 3 )
         rawDataObj.addValue( -3 )
 
-        assertEquals(testArrayList.sort(), paramObj.getFeatures(rawDataObj).sort())
+        assertEquals(testArrayList.sort(), paramObj.getFeatures(rawDataObj).sortBy { it.toDouble() })
     }
 
     @Test
     fun getFeaturesUnsignedTouchedStorage() {
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
 
         val testArrayList: ArrayList<Double> = arrayListOf(-3.0, 5.5, 4.4, 3.3, 2.2, 1.1, 0.0, 3.0)
 
@@ -123,36 +123,36 @@ class StatisticParameterFeaturesTest {
         if(lastTime != paramObj.getComputationTime())
             assertEquals(lastTime, paramObj.getComputationTime())
         else
-            assertEquals(testArrayList.sort(), paramObj.getFeatures(rawDataObj).sort())
+            assertEquals(testArrayList.sort(), paramObj.getFeatures(rawDataObj).sortBy { it.toDouble() })
     }
 
     @Test
     fun isAbsoluteFrequencyUntouchedNoStorage(){
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
 
         val paramObj = StatisticParameterFeatures()
 
-        assertEquals(paramObj.getAbsoluteFrequencies(rawDataObj).sort(), arrayListOf(2.0,2.0,2.0,2.0,1.0).sort())
+        assertEquals(paramObj.getAbsoluteFrequencies(rawDataObj), mapOf(5.5 to 2, 4.4 to 2, 3.3 to 2, 2.2 to 2, 1.1 to 2, 0.0 to 1))
     }
 
     @Test
     fun isAbsoluteFrequencyTouchedNoStorage(){
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
 
         val paramObj = StatisticParameterFeatures()
         paramObj.getAbsoluteFrequencies(rawDataObj)
 
         rawDataObj.addValue(5.5)
 
-        assertEquals(paramObj.getAbsoluteFrequencies(rawDataObj).sort(), arrayListOf(3.0,2.0,2.0,2.0,1.0).sort())
+        assertEquals(paramObj.getAbsoluteFrequencies(rawDataObj), mapOf(5.5 to 3, 4.4 to 2, 3.3 to 2, 2.2 to 2, 1.1 to 2, 0.0 to 1))
     }
 
     @Test
     fun isAbsoluteFrequencyTouchedStorage(){
         val rawDataObj = RawDataList()
-        rawDataObj.addValues(ArrayList<Double>(knownArrayListUnsigned))
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
 
         val paramObj = StatisticParameterFeatures()
         paramObj.useStorage( true )
@@ -166,5 +166,87 @@ class StatisticParameterFeaturesTest {
         paramObj.getAbsoluteFrequencies(rawDataObj)
 
         assertEquals(timeToTest, paramObj.getComputationTime())
+    }
+
+    @Test
+    fun isRelativeFrequencyTouchedNoStorage(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
+
+        val paramObj = StatisticParameterFeatures()
+        paramObj.getRelativeFrequencies(rawDataObj)
+
+        rawDataObj.addValue(5.5)
+
+        assertEquals(paramObj.getRelativeFrequencies(rawDataObj), mapOf(5.5 to 0.25, 4.4 to 1/6.0, 3.3 to 1/6.0, 2.2 to 1/6.0, 1.1 to 1/6.0, 0.0 to 1/12.0))
+    }
+
+    @Test
+    fun isRelativeFrequencyTouchedStorage(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
+
+        val paramObj = StatisticParameterFeatures()
+        paramObj.useStorage( true )
+        paramObj.getRelativeFrequencies(rawDataObj)
+
+        rawDataObj.addValue(5.5)
+
+        paramObj.getFeatures( rawDataObj )
+        val timeToTest = paramObj.getComputationTime()
+        Thread.sleep(200)
+        paramObj.getRelativeFrequencies(rawDataObj)
+
+        assertEquals(timeToTest, paramObj.getComputationTime())
+    }
+
+    @Test
+    fun isCumulativeFrequencyTouchedNoStorage(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
+
+        val paramObj = StatisticParameterFeatures()
+        paramObj.getCumulativeFrequencies(rawDataObj)
+
+        rawDataObj.addValue(5.5)
+
+        assertEquals(
+            paramObj.getCumulativeFrequencies(rawDataObj),
+            mapOf(
+                0.0 to 1/12.0,
+                1.1 to 1/4.0,
+                2.2 to 5/12.0,
+                3.3 to 7/12.0,
+                4.4 to 9/12.0,
+                5.5 to 1.0
+            )
+        )
+    }
+
+    @Test
+    fun isCumulativeFrequencyTouchedStorage(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues(ArrayList<Number>(knownArrayListUnsigned))
+
+        val paramObj = StatisticParameterFeatures()
+        paramObj.useStorage( true )
+        paramObj.getCumulativeFrequencies(rawDataObj)
+
+        val time1 = paramObj.getComputationTime()
+        Thread.sleep(200)
+
+        rawDataObj.addValue(5.5)
+        paramObj.getCumulativeFrequencies(rawDataObj)
+
+        val time2 = paramObj.getComputationTime()
+        Thread.sleep(200)
+
+        paramObj.getCumulativeFrequencies(rawDataObj)
+        val time3 = paramObj.getComputationTime()
+
+        assertEquals(
+                true,
+                time1 != time2 && time2 == time3
+        )
     }
 }
