@@ -1,11 +1,13 @@
 package mainsuite
 
 import mainsuite.container.RawDataList
+import mainsuite.container.StatisticParameterBuckets
 import mainsuite.container.StatisticParameterFeatures
 
 class UniDimensionalScale constructor (initialRawDataTable : RawDataList) {
     private val rawDataTable : RawDataList = initialRawDataTable
     private val featureObj: StatisticParameterFeatures = StatisticParameterFeatures()
+    private val bucketObj: StatisticParameterBuckets = StatisticParameterBuckets()
 
     fun getAllFeatures():ArrayList<Number> {
         return featureObj.getFeatures( rawDataTable )
