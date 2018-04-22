@@ -70,4 +70,17 @@ class RawDataList {
         }
         this.clientsWithCurrentData.clear()
     }
+
+    fun getValue(i: Int): Number {
+        return when {
+            rawData.size > 0 -> rawData[0]
+            else -> {
+                Double.NaN
+            }
+        }
+    }
+
+    fun getSize(): Int {
+        return rawData.size
+    }
 }

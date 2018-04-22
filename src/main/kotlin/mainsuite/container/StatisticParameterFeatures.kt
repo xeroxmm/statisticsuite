@@ -5,22 +5,34 @@ class StatisticParameterFeatures : StatisticParameterBase() {
     private var absoluteFrequencyList: MutableMap<Number, Int> = mutableMapOf()
     private var cumulativeFrequencyList: MutableMap<Number, Double> = mutableMapOf()
 
-    private var useStorage: Boolean = false
+    private var latestMode : RawNumberArray = RawNumberArray()
+
     private var latestComputationTime: Long = 0
 
-    fun getFeatures(dataList: RawDataList): ArrayList<Number> {
+    override fun useStorage(use: Boolean){
+        if(this.useStorage != use)
+            latestComputationTime = 0L
+
+        this.useStorage = use
+    }
+
+    fun getFeatures(): ArrayList<Number>{
         if (featureList.size > 0 &&
                 latestComputationTime > 0 &&
                 useStorage &&
-                !dataList.hasValueUpdateToBroadcast(this.myIdentifier)
+                !latestDataList.hasValueUpdateToBroadcast(this.myIdentifier)
         )
             return featureList
 
-        dataList.registerClientAsUpToDate(this.myIdentifier)
+        this.registerClientAsUpToDate()
 
-        this.createFeatureLists(dataList.getValues())
+        this.createFeatureLists(latestDataList.getValues())
 
         return featureList
+    }
+    fun getFeatures(dataList: RawDataList): ArrayList<Number> {
+        latestDataList = dataList
+        return getFeatures()
     }
 
     fun getRelativeFrequencies(dataList: RawDataList): Map<Number, Double> {
@@ -114,15 +126,38 @@ class StatisticParameterFeatures : StatisticParameterBase() {
             cumulativeFrequencyList.set(it, tempSum / sizeOfList.toDouble())
         }
     }
-
-    fun useStorage(use: Boolean) {
-        if (use != useStorage)
-            latestComputationTime = 0
-
-        useStorage = use
-    }
-
     fun getComputationTime(): Long {
         return latestComputationTime
+    }
+
+    fun getMode():ArrayList<Number>{
+        if(this.isUpdateNeeded( latestMode)){
+            calcMode()
+            this.registerClientAsUpToDate()
+        }
+        return latestMode.getValueList()
+    }
+
+    private fun calcMode() {
+        var list = getAbsoluteFrequencies( latestDataList )
+        var maxAmount = 0
+        var maxValue : ArrayList<Number> = arrayListOf()
+        list.forEach {
+            if(it.value > maxAmount){
+                maxValue = arrayListOf(it.key)
+                maxAmount = it.value
+            } else if(it.value == maxAmount)
+                maxValue.add(it.key)
+        }
+
+        when (maxAmount) {
+            0 -> latestMode.setValue(Double.NaN)
+            else -> { latestMode.setList( maxValue ) }
+        }
+    }
+
+    fun getMode(rawDataObj: RawDataList): ArrayList<Number> {
+        latestDataList = rawDataObj
+        return getMode()
     }
 }

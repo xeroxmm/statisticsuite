@@ -1,8 +1,9 @@
 import mainsuite.container.RawDataList
 import mainsuite.container.StatisticParameterFeatures
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
-import org.junit.Test
+import mainsuite.container.StatisticParameterLocation
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 
 class StatisticParameterFeaturesTest {
     private val knownArrayListSigned: ArrayList<Double> = arrayListOf(-5.5, -4.4, -3.3, -2.2, -1.1, 0.0, 1.1, 2.2, 3.3, 4.4, 5.5)
@@ -48,6 +49,8 @@ class StatisticParameterFeaturesTest {
 
         paramObj.getFeatures(rawDataObj)
         val lastTime_4 = paramObj.getComputationTime() // is != 0
+
+        System.out.println("" + lastTime_1 + " - " + lastTime_2 + " - " + lastTime_3 + " - " + lastTime_4)
 
         assertEquals(
                 lastTime_1 != 0L &&
@@ -248,5 +251,84 @@ class StatisticParameterFeaturesTest {
                 true,
                 time1 != time2 && time2 == time3
         )
+    }
+
+    @Test
+    fun isMedianUntouched(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues( ArrayList<Number>( knownArrayListUnsigned ))
+
+        val statParamObj = StatisticParameterLocation()
+        val median1 = statParamObj.getMedian( rawDataObj )
+
+        assertEquals(3.3, median1)
+    }
+
+    @Test
+    fun isMedianTouched(){
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues( ArrayList<Number>( knownArrayListUnsigned ))
+
+        val statParamObj = StatisticParameterLocation()
+        val median1 = statParamObj.getMedian( rawDataObj )
+
+        rawDataObj.addValue( 20.0 )
+        rawDataObj.addValue( 20.0 )
+        rawDataObj.addValue( 20.0 )
+        val median2 = statParamObj.getMedian()
+
+        assertEquals(
+                true,
+                median1 != median2 && median2 == 3.85
+        )
+    }
+    @Test
+    fun isArithmeticMeanUntouched() {
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues( ArrayList<Number>( knownArrayListUnsigned ))
+
+        val statParamObj = StatisticParameterLocation()
+        val mean1 = statParamObj.getArithmeticMean( rawDataObj )
+
+        assertEquals(3.0, mean1)
+    }
+
+    @Test
+    fun isArithmeticMeanTouched() {
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues( ArrayList<Number>( knownArrayListUnsigned ))
+
+        val statParamObj = StatisticParameterLocation()
+        val mean1 = statParamObj.getArithmeticMean( rawDataObj )
+
+        rawDataObj.addValue(15)
+        val mean2 = statParamObj.getArithmeticMean( rawDataObj )
+
+        assertEquals(true, mean1 != mean2 && mean2 == 4.0)
+    }
+
+    @Test
+    fun isModeUntouched() {
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues( ArrayList<Number>( knownArrayListUnsigned ))
+
+        val statParamObj = StatisticParameterFeatures()
+        val mean1 = statParamObj.getMode( rawDataObj )
+
+        assertEquals(arrayListOf(5.5,4.4,3.3,2.2,1.1), mean1)
+    }
+
+    @Test
+    fun isModeTouched() {
+        val rawDataObj = RawDataList()
+        rawDataObj.addValues( ArrayList<Number>( knownArrayListUnsigned ))
+
+        val statParamObj = StatisticParameterFeatures()
+        val mean1 = statParamObj.getMode( rawDataObj )
+
+        rawDataObj.addValue( 4.4)
+        val mean2 = statParamObj.getMode()
+
+        assertEquals(arrayListOf(4.4), mean2)
     }
 }

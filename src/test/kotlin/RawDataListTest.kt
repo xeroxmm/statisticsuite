@@ -1,7 +1,9 @@
 import mainsuite.container.RawDataList
 import mainsuite.interfaces.OnChangeBroadcastInterface
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
 
 class RawDataListTest {
     private val knownArrayListUnsigned: ArrayList<Double> = arrayListOf(5.5, 4.4, 3.3, 2.2, 1.1, 0.0, 1.1, 2.2, 3.3, 4.4, 5.5)
@@ -11,7 +13,7 @@ class RawDataListTest {
         val rawObj = RawDataList()
         rawObj.useAsBaseList( ArrayList<Number>(knownArrayListUnsigned) )
 
-        assertEquals(knownArrayListUnsigned, rawObj.getValues())
+        Assertions.assertEquals(knownArrayListUnsigned, rawObj.getValues())
     }
 
     @Test
